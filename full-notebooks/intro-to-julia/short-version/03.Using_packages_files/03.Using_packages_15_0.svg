@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     width="75.0mm" height="75.0mm"
+     shape-rendering="crispEdges">
+<rect x="0.0mm" y="0.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#008B74" stroke="none" />
+<rect x="25.0mm" y="0.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#005500" stroke="none" />
+<rect x="50.0mm" y="0.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#005FD5" stroke="none" />
+<rect x="0.0mm" y="25.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#8E0037" stroke="none" />
+<rect x="25.0mm" y="25.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#FF2C6F" stroke="none" />
+<rect x="50.0mm" y="25.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#B8739F" stroke="none" />
+<rect x="0.0mm" y="50.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#0E1A00" stroke="none" />
+<rect x="25.0mm" y="50.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#C3C958" stroke="none" />
+<rect x="50.0mm" y="50.0mm"
+      width="24.0mm" height="24.0mm"
+      fill="#49A9B8" stroke="none" />
+</svg>

@@ -1,0 +1,679 @@
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Multiple-dispatch">Multiple dispatch<a class="anchor-link" href="#Multiple-dispatch">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this notebook we'll explore <strong>multiple dispatch</strong>, which is a key feature of Julia.</p>
+<p>Multiple dispatch makes software <em>generic</em> and <em>fast</em>!</p>
+<h4 id="Starting-with-the-familiar">Starting with the familiar<a class="anchor-link" href="#Starting-with-the-familiar">&#182;</a></h4><p>To understand multiple dispatch in Julia, let's start with what we've already seen.</p>
+<p>We can declare functions in Julia without giving Julia any information about the types of the input arguments that function will receive:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>f (generic function with 1 method)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and then Julia will determine on its own which input argument types make sense and which do not:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>100</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+MethodError: no method matching ^(::Array{Int64,1}, ::Int64)
+Closest candidates are:
+  ^(!Matched::Float16, ::Integer) at math.jl:795
+  ^(!Matched::Missing, ::Integer) at missing.jl:120
+  ^(!Matched::Missing, ::Number) at missing.jl:93
+  ...
+
+Stacktrace:
+ [1] macro expansion at ./none:0 [inlined]
+ [2] literal_pow at ./none:0 [inlined]
+ [3] f(::Array{Int64,1}) at ./In[1]:1
+ [4] top-level scope at In[3]:1</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Specifying-the-types-of-our-input-arguments">Specifying the types of our input arguments<a class="anchor-link" href="#Specifying-the-types-of-our-input-arguments">&#182;</a></h4><p>However, we also have the <em>option</em> to tell Julia explicitly what types our input arguments are allowed to have.</p>
+<p>For example, let's write a function <code>foo</code> that only takes strings as inputs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="n">String</span><span class="p">,</span> <span class="n">y</span><span class="o">::</span><span class="n">String</span><span class="p">)</span> <span class="o">=</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;My inputs x and y are both strings!&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>foo (generic function with 1 method)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We see here that in order to restrict the type of <code>x</code> and <code>y</code> to <code>String</code>s, we just follow the input argument name by a double colon and the keyword <code>String</code>.</p>
+<p>Now we'll see that <code>foo</code> works on <code>String</code>s and doesn't work on other input argument types.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">,</span> <span class="s">&quot;hi!&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>My inputs x and y are both strings!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+MethodError: no method matching foo(::Int64, ::Int64)
+
+Stacktrace:
+ [1] top-level scope at In[6]:1</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To get <code>foo</code> to work on integer (<code>Int</code>) inputs, let's tack <code>::Int</code> onto our input arguments when we declare <code>foo</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Int</span><span class="p">,</span> <span class="n">y</span><span class="o">::</span><span class="kt">Int</span><span class="p">)</span> <span class="o">=</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;My inputs x and y are both integers!&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>foo (generic function with 2 methods)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>My inputs x and y are both integers!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now <code>foo</code> works on integers! But look, <code>foo</code> also still works when <code>x</code> and <code>y</code> are strings!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">,</span> <span class="s">&quot;hi!&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>My inputs x and y are both strings!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is starting to get to the heart of multiple dispatch. When we declared</p>
+<div class="highlight"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Int</span><span class="p">,</span> <span class="n">y</span><span class="o">::</span><span class="kt">Int</span><span class="p">)</span> <span class="o">=</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;My inputs x and y are both integers!&quot;</span><span class="p">)</span>
+</pre></div>
+<p>we didn't overwrite or replace</p>
+<div class="highlight"><pre><span></span><span class="n">foo</span><span class="p">(</span><span class="n">y</span><span class="o">::</span><span class="n">String</span><span class="p">,</span> <span class="n">y</span><span class="o">::</span><span class="n">String</span><span class="p">)</span>
+</pre></div>
+<p>Instead, we just added an additional <strong><em>method</em></strong> to the <strong><em>generic function</em></strong> called <code>foo</code>.</p>
+<p>A <strong><em>generic function</em></strong> is the abstract concept associated with a particular operation.</p>
+<p>For example, the generic function <code>+</code> represents the concept of addition.</p>
+<p>A <strong><em>method</em></strong> is a specific implementation of a generic function for <em>particular argument types</em>.</p>
+<p>For example, <code>+</code> has methods that accept floating point numbers, integers, matrices, etc.</p>
+<p>We can use the <code>methods</code> to see how many methods there are for <code>foo</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">methods</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+2 methods for generic function <b>foo</b>:<ul><li> foo(x::<b>Int64</b>, y::<b>Int64</b>) in Main at In[7]:1</li> <li> foo(x::<b>String</b>, y::<b>String</b>) in Main at In[4]:1</li> </ul>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>methods(+) returns 163 methods...</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So, we now can call <code>foo</code> on integers or strings. When you call <code>foo</code> on a particular set of arguments, Julia will infer the types of the inputs and dispatch the appropriate method. <em>This</em> is multiple dispatch.</p>
+<p>Multiple dispatch makes our code generic and fast. Our code can be generic and flexible because we can write code in terms of abstract operations such as addition and multiplication, rather than in terms of specific implementations. At the same time, our code runs quickly because Julia is able to call efficient methods for the relevant types.</p>
+<p>To see which method is being dispatched when we call a generic function, we can use the @which macro:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@which</span> <span class="n">foo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+foo(x::<b>Int64</b>, y::<b>Int64</b>) in Main at In[7]:1
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@which</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="mf">3.0</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
++(x::<b>Float64</b>, y::<b>Float64</b>) in Base at <a href="https://github.com/JuliaLang/julia/tree/0d713926f85dfa3e4e0962215b909b8e47e94f48/base/float.jl#L395" target="_blank">float.jl:395</a>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Given that a method written specifically for floating point numbers is dispatched on <code>3.0 + 3.0</code>, the LLVM code generated is extremely terse:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_llvm</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="mf">3.0</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+; Function +
+; Location: float.jl:395
+define double @&#34;julia_+_34566&#34;(double, double) {
+top:
+  %2 = fadd double %0, %1
+  ret double %2
+}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that Julia is fast even when we write generic function definitions because, at the end of the day, specific/tailored methods are called under the hood.</p>
+<p>For example, note that we can declare the adding function <code>myadd</code> without providing any type annotations -</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">myadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>myadd (generic function with 1 method)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and though we haven't constrained the types of <code>x</code> and <code>y</code>, we'll see that the LLVM code generated for <code>myadd(3.0, 3.0)</code> looks like that of <code>3.0 + 3.0</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+    <div class="prompt input_prompt">  </div>
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@code_llvm</span> <span class="n">myadd</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    
+    <div class="prompt"> </div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+; Function myadd
+; Location: In[24]:1
+define double @julia_myadd_35761(double, double) {
+top:
+; Function +; {
+; Location: float.jl:395
+  %2 = fadd double %0, %1
+;}
+  ret double %2
+}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+ 
+
